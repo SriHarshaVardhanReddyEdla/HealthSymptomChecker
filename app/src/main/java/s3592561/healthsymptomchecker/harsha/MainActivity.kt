@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -86,12 +88,14 @@ fun LoadingScreen() {
 
 
             Image(
+                modifier = Modifier.size(280.dp,280.dp),
                 painter = painterResource(id = R.drawable.symptom_checker),
                 contentDescription = "Health Symptom Checker",
             )
 
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Health Symptom Checker",
+                text = "Health Symptom \nChecker",
                 color = colorResource(id = R.color.black),
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
