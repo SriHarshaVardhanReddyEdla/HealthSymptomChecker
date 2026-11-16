@@ -69,9 +69,6 @@ fun AccountAccessActivityScreen() {
 
     var errorMessage by remember { mutableStateOf("") }
 
-
-
-
     val context = LocalContext.current as Activity
 
     Column(
@@ -204,6 +201,15 @@ fun AccountAccessActivityScreen() {
                     else -> {
                         errorMessage = ""
 
+                        val userData = UserData(
+                            "",
+                            "",
+                            email,
+                            password,
+
+                        )
+
+                        loginUser(userData, context)
 
                     }
                 }
@@ -246,4 +252,41 @@ fun AccountAccessActivityScreen() {
 @Composable
 fun AccountAccessActivityScreenPreview() {
     AccountAccessActivityScreen()
+}
+
+fun loginUser(userData: UserData, context: Context, onLoginSuccess: () -> Unit={}) {
+
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference =
+        firebaseDatabase.getReference("UsersData").child(userData.emailId.replace(".", ","))
+
+    databaseReference.get().addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            val dbData = task.result?.getValue(userData::class.java)
+            if (dbData != null) {
+                if (dbData.password == userData.password) {
+
+//                    AppUserData.saveLoginStatus(context, true)
+//                    AppUserData.saveUserName(context, dbData.name)
+//                    AppUserData.saveUserEmail(context, dbData.emailid)
+                    Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+
+                    onLoginSuccess.invoke()
+
+                } else {
+                    Toast.makeText(context, "Seems Incorrect Credentials", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else {
+                Toast.makeText(context, "Your account not found", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(
+                context,
+                "Something went wrong",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+    }
 }

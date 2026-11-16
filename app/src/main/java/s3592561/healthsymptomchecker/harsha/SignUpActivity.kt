@@ -2,6 +2,7 @@ package s3592561.healthsymptomchecker.harsha
 
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -40,12 +41,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.database.FirebaseDatabase
 
 
 class SignUpActivity : ComponentActivity() {
@@ -268,7 +271,13 @@ fun SetupAccountActivityScreen() {
                     }
 
                     else -> {
-                       //call signup function
+                        val userData = UserData(
+                            fullName,
+                            age,
+                            email,
+                            password
+                        )
+                        registerUser(userData, context)
                     }
 
                 }
@@ -312,3 +321,42 @@ fun SetupAccountActivityScreenPreview() {
     SetupAccountActivityScreen()
 }
 
+fun registerUser(userData: UserData, context: Context,onRegistered: () -> Unit={}) {
+
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference = firebaseDatabase.getReference("UsersData")
+
+    databaseReference.child(userData.emailId.replace(".", ","))
+        .setValue(userData)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(context, "You Registered Successfully", Toast.LENGTH_SHORT)
+                    .show()
+
+                onRegistered.invoke()
+
+            } else {
+                Toast.makeText(
+                    context,
+                    "Registration Failed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        .addOnFailureListener { _ ->
+            Toast.makeText(
+                context,
+                "Something went wrong",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+}
+
+
+
+data class UserData(
+    var name : String = "",
+    var age : String = "",
+    var emailId : String = "",
+    var password: String = ""
+)
