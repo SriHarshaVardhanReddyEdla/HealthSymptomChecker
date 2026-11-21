@@ -266,10 +266,10 @@ fun loginUser(userData: UserData, context: Context, onLoginSuccess: () -> Unit={
             if (dbData != null) {
                 if (dbData.password == userData.password) {
 
-//                    AppUserData.saveLoginStatus(context, true)
-//                    AppUserData.saveUserName(context, dbData.name)
-//                    AppUserData.saveUserEmail(context, dbData.emailid)
+
                     Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+
+                    context.startActivity(Intent(context, HomeActivity::class.java))
 
                     onLoginSuccess.invoke()
 
